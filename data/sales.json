@@ -1,0 +1,17 @@
+[
+    {
+        "name": "David",
+        "age": 29,
+        "number": "A0001"
+    },
+    {
+        "name": "Bill",
+        "age": 28,
+        "number": "B0008"
+    },
+    {
+        "name": "Ken",
+        "age": 25,
+        "number": "C0003"
+    }
+]

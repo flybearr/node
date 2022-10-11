@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="fixed">
+        <a href="javascript: a('aaa')">aaa</a>
+        <a href="javascript: a('bbb')">bbb</a>
+        <a href="javascript: a('ccc')">ccc</a>
+    </div>
+    <script>
+
+
+        // push state只可用於更改路徑，不可更改dom，不可更改domain
+        function a(str) {
+            let state = {
+                data: str
+            };
+
+            let url = '';
+
+            switch (str) {
+                case 'aaa':
+                    url = '?a=123&b=456';
+                    break;
+                case 'bbb':
+                    url = '/abc/edfg';
+                    break;
+                case 'ccc':  //不可行
+                    url = 'http://tw.yahoo.com';
+                    break;
+            }
+
+            history.pushState(state, '', url);
+        }
+
+        window.addEventListener('popstate', function (e) {
+            console.log(e.state);
+        })
+    </script>
+</body>
+
+</html>

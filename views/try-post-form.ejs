@@ -1,0 +1,33 @@
+<%- include('parts/html_head') %>
+    <%- include('parts/html_navbar') %>
+
+
+        <div class="container">
+            <div class="row">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="text" class="form-control" id="email" name="email">
+                        <% if(typeof email !=='undefined' ) { %>
+                            <div id="emailHelp" class="form-text">
+                                <%= email %>
+                            </div>
+                            <% } %>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                        <div id="emailHelp" class="form-text">
+                            <%= locals.password ? password : '' %>
+                            <!-- 有變數會傳到locals物件裡面 -->
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+
+
+        <%- include('parts/scripts') %>
+            <%- include('parts/html_foot') %>
