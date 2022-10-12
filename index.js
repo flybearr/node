@@ -1,5 +1,10 @@
 require('dotenv').config();
 const express = require('express');
+// const multer = require('multer');
+// const upload = multer({ dest: 'tmp_upload/' });
+const upload = require(__dirname + '/module/upload_imgs');
+
+const fs = require('fs').promises;
 
 const app = express();
 
@@ -58,6 +63,20 @@ app.post('/try-post-form', (req, res) => {
     res.render('try-post-form', req.body);
 })
 
+app.post('/try-upload', upload.single('avatar'), async (req, res) => {
+    res.json(req.file);
+    // if (req.file && req.file.originalname) {
+    //     await fs.rename(req.file.path, `public/imgs/${req.file.originalname}`)
+    //     res.json(req.file);
+    // } else {
+    //     res.json({ msg: '沒上傳檔案' });
+    // }
+
+});
+
+app.post('/try-upload2', upload.array('photos'), async (req, res) => {
+    res.json(req.files);
+});
 
 app.get('/json-test', (req, res) => {
     // res.send({ name: '力1', age: 30 });
