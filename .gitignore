@@ -1,5 +1,5 @@
 node_modules
 
-tmp_upload
+tmp_upload/*
 
-public/uploads
+public/uploads/*
