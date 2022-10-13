@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        .photo {
+            display: inline-block;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 5px;
+            box-shadow: 9px 9px black;
+            margin-right: 10px;
+
+        }
+
+        .photo img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .photo .remove {
+            color: red;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <form name="form1">
+        <input type="file" accept="image/*" name="photos" multiple onchange="upload()">
+    </form>
+    <div id="photo-div"></div>
+
+    <!-- <div id="photo">
+        <img src="" alt="">
+        <span class="remove" onclick="remove(event)">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </span>
+    </div> -->
+    <script>
+        let photoData = [];
+        const item_func = ({ filename }) => {
+            return `<div class="photo" data-id="${filename}">
+            <img src="/uploads/${filename}" alt="">
+            <span class="remove" onclick="removeitem(event)">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </span>
+        </div>`;
+        }
+
+
+        async function upload() {
+            const fd = new FormData(document.form1);
+
+
+
+            const r = await fetch('/try-upload2', {
+                method: 'POST',
+                body: fd
+            });
+
+            const result = await r.json();
+
+            photoData.push(...result);
+
+            let str = '';
+
+
+            str = photoData.map(obj => item_func(obj)).join('');
+
+
+            document.querySelector('#photo-div').innerHTML = str;
+        }
+
+        function removeitem(event) {
+            const item = event.target.closest('.photo');
+            const id = item.getAttribute('data-id');
+            console.log(id);
+            item.remove();
+        }
+    </script>
+</body>
+
+</html>

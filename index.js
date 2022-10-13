@@ -1,5 +1,8 @@
 require('dotenv').config();
 const express = require('express');
+
+express.li = '您好';
+const { join } = require('path');
 // const multer = require('multer');
 // const upload = multer({ dest: 'tmp_upload/' });
 const upload = require(__dirname + '/module/upload_imgs');
@@ -77,6 +80,26 @@ app.post('/try-upload', upload.single('avatar'), async (req, res) => {
 app.post('/try-upload2', upload.array('photos'), async (req, res) => {
     res.json(req.files);
 });
+
+app.get('/my-params1/:action/:id?', upload.array('photos'), async (req, res) => {
+    res.json(req.params);
+});
+// 在params    ?是reg expression 可有可無
+
+app.get(/^\/m\/09\d{2}-?\d{3}-?\d{3}$/i, (req, res) => {
+    let u = req.url.slice(3);
+    u = u.split('?')[0]; //去掉 query string
+    u = u.split('-'), join('');
+    res.json({ mobile: u });
+})
+
+
+const admin = require(__dirname + '/routes/admin2');
+app.use('/admin2', admin);
+
+
+
+
 
 app.get('/json-test', (req, res) => {
     // res.send({ name: '力1', age: 30 });

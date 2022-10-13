@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        .photo {
+            display: inline-block;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 5px;
+            box-shadow: 9px 9px black;
+            margin-right: 10px;
+
+        }
+
+        .photo img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .photo .remove {
+            color: red;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .photo .go-forward {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .photo .go-back {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <form name="form1">
+        <input type="file" accept="image/*" name="photos" multiple onchange="upload()">
+    </form>
+    <div id="photo-div"></div>
+
+    <!-- <div id="photo">
+        <img src="" alt="">
+        <span class="remove" onclick="remove(event)">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </span>
+        <span class="go-forward" onclick="goForward(event)">
+                <i class="fa-solid fa-circle-arrow-left"></i>
+            </span>
+            <span class="go-back" onclick="goBack(event)">
+                <i class="fa-solid fa-circle-arrow-right"></i>
+            </span>
+    </div> -->
+    <script>
+        let photoData = [];
+        const photo_div = document.querySelector('#photo-div');
+
+
+        const item_func = ({ filename }) => {
+            return `<div class="photo" data-id="${filename}">
+            <img src="/uploads/${filename}" alt="">
+                <span class="remove" onclick="removeitem(event)">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </span>
+                <span class="go-forward" onclick="goforward(event)">
+                    <i class="fa-solid fa-circle-arrow-left"></i>
+                 </span>
+                <span class="go-back" onclick="goback(event)">
+                    <i class="fa-solid fa-circle-arrow-right"></i>
+                </span>
+        </div>`;
+        }
+
+        function render() {
+            photo_div.innerHTML = photoData.map(obj => item_func(obj)).join('');
+        }
+
+        async function upload() {
+            const fd = new FormData(document.form1);
+
+
+
+            const r = await fetch('/try-upload2', {
+                method: 'POST',
+                body: fd
+            });
+
+            const result = await r.json();
+
+            photoData.push(...result);
+
+            render();
+
+
+
+        }
+
+        function goforward(event) {
+            const item = event.target.closest('.photo');
+            const id = item.getAttribute('data-id');
+            const index = getindex(id);
+            if (index <= 0) return;
+
+            const [currentItem] = photoData.splice(index, 1)// 取出
+            //splice 切完後，得到的還是一個陣列， 用陣列將他存起來
+
+            photoData.splice(index - 1, 0, currentItem);
+            // 第三參數 是新增的值
+            render();
+
+        }
+        function goback(event) {
+            const item = event.target.closest('.photo');
+            const id = item.getAttribute('data-id');
+            const index = getindex(id);
+            if (index >= index.length - 1) return;
+
+            const [currentItem] = photoData.splice(index, 1)// 取出
+            //splice 切完後，得到的還是一個陣列， 用陣列將他存起來
+
+            photoData.splice(index + 1, 0, currentItem);
+            // 第三參數 是新增的值
+            render();
+
+        }
+
+        function getindex(id) {
+            for (let i = 0; i < photoData.length; i++) {
+                const item = photoData[i];
+                if (item.filename === id) return i;
+            }
+            return -1;
+        }
+    </script>
+</body>
+
+</html>

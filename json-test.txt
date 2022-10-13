@@ -5,3 +5,22 @@ res.send()
 res.render()
 
 res.json()
+
+
+------------------
+
+
+req.query // query string   順序一定要正確
+
+
+req.body   // 表單資料
+
+
+req.file   //檔案
+req.files   //檔案
+
+
+
+req.params // 檔案的路徑
+
+//跟query string 相比比較寬鬆，也沒有順序問題
