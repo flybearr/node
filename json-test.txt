@@ -21,6 +21,6 @@ req.files   //檔案
 
 
 
-req.params // 檔案的路徑
+req.params // 路徑的參數
 
 //跟query string 相比比較寬鬆，也沒有順序問題
