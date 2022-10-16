@@ -2,11 +2,11 @@ res.end()
 
 res.send()
 
-res.render()
+res.render()  //  只會抓取view資料夾的.ejs 檔案  
 
 res.json()
 
-
+res.redirect()
 ------------------
 
 
