@@ -85,8 +85,8 @@
             return `
             <nav aria-label="Page navigation example">
                     <ul class="pagination">
-                        <li class="page-item ${page < 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="?page=${page - 1}">
+                        <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="javascript:gotoPageDown(${page})">
                                 <i class="fa-solid fa-circle-arrow-left"></i>
                             </a>
                         </li>
@@ -103,8 +103,8 @@
                         
 
                 
-                        <li class="page-item ${page => totalPages ? 'disabled' : ''}">
-                            <a class="page-link" href="?page=${location.search + 1}">
+                        <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="javascript:gotoPageUp(${page})">
                                 <i class="fa-solid fa-circle-arrow-right"></i></a>
                         </li>
                     </ul>
@@ -190,12 +190,23 @@
             const usp = new URLSearchParams(location.search);
             usp.set('page', p);
             history.pushState('', '', '?' + usp.toString());
-
-
+            getData();
+        }
+        function gotoPageUp(p) {
+            const usp = new URLSearchParams(location.search);
+            usp.set('page', p + 1);
+            history.pushState('', '', '?' + usp.toString());
             getData();
 
-
         }
+        function gotoPageDown(p) {
+            const usp = new URLSearchParams(location.search);
+            usp.set('page', p - 1);
+            history.pushState('', '', '?' + usp.toString());
+            getData();
+        }
+
+
 
         window.addEventListener('popstate', function () {
             getData();
