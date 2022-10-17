@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Document</title>
+</head>
+
+<body>
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4"></div>
+            <div class="col-4">
+                <form class="d-flex" role="search" onsubmit="doSearch(event);">
+                    <input class="form-control me-2" name="search" value="" type="search" placeholder="Search"
+                        aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="pagi-container">
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col table-container">
+
+                <!-- <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">商品名稱</th>
+                        <th scope="col">種類</th>
+                        <th scope="col">品牌</th>
+                        <th scope="col">價格</th>
+                        <th scope="col">庫存</th>
+                        <th scope="col">圖片名稱</th>
+                        <th scope="col">商品敘述</th>
+                        <th scope="col">日期測試</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table> -->
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.5/dayjs.min.js"
+        integrity="sha512-Ot7ArUEhJDU0cwoBNNnWe487kjL5wAOsIYig8llY/l0P2TUFwgsAHVmrZMHsT8NGo+HwkjTJsNErS6QqIkBxDw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        const t_con = document.querySelector('.table-container');
+        const p_con = document.querySelector('.pagi-container');
+
+        function renderpage({ page, totalPages }) {
+            return `
+            <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item ${page < 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${page - 1}">
+                                <i class="fa-solid fa-circle-arrow-left"></i>
+                            </a>
+                        </li>
+                        ${Array(8).fill(1).map((el, i) => {
+                const p = page - 5 + i;
+                if (p < 1 || p > totalPages) return '';
+                return `
+                                <li class="page-item ${p === page ? 'active' : ''}">
+                                    <a class="page-link" href="javascript:gotoPage(${p})">${p}</a>
+                                </li>
+                                `
+            }).join('')
+                }
+                        
+
+                
+                        <li class="page-item ${page => totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${location.search + 1}">
+                                <i class="fa-solid fa-circle-arrow-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            `;
+        }
+
+
+
+        function renderTable({ rows }) {
+            return ` <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">商品名稱</th>
+                        <th scope="col">種類</th>
+                        <th scope="col">品牌</th>
+                        <th scope="col">價格</th>
+                        <th scope="col">庫存</th>
+                        <th scope="col">圖片名稱</th>
+                        <th scope="col">商品敘述</th>
+                        <th scope="col">日期測試</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows.map(e => {
+                return `  
+                <tr>
+                    <th scope="row">${e.product_sid}</th>
+                        <td>${e.product_name}</td>
+                        <td>${e.product_category_sid}</td>
+                        <td>${e.brand_sid}</td>
+                        <td>${e.product_price}</td>
+                        <td>${e.product_inventory}</td>
+                        <td>${e.picture}</td>
+                        <td>${e.product_description}</td>
+                        <td>${dayjs('1999-03-31 12:31:18').format('YYYY/MM/DD')} </td>
+                </tr>
+                `;
+            }).join('')}
+          
+
+                </tbody>
+            </table>`;
+        }
+
+        fetch('/products/api' + location.search)
+            .then(r => r.json())
+            .then(result => {
+                // console.log(result);
+
+                t_con.innerHTML = renderTable(result);
+                p_con.innerHTML = renderpage(result);
+            });
+
+
+
+
+        async function getData() {
+            let usp = new URLSearchParams(location.search);
+            const r = await fetch('/products/api?' + usp.toString());
+            const result = await r.json();
+            t_con.innerHTML = renderTable(result);
+            p_con.innerHTML = renderpage(result);
+        }
+
+        const usp = new URLSearchParams(location.search);
+        if (usp.get('search')) document.forms[0].search.value = usp.get('search');
+
+
+        function doSearch(event) {
+            event.preventDefault();
+            const f = event.currentTarget;
+
+            const usp = new URLSearchParams({ search: f.search.value });
+            history.pushState('', '', '?' + usp.toString());
+            getData();
+
+        }
+
+
+        function gotoPage(p) {
+            const usp = new URLSearchParams(location.search);
+            usp.set('page', p);
+            history.pushState('', '', '?' + usp.toString());
+
+
+            getData();
+
+
+        }
+
+        window.addEventListener('popstate', function () {
+            getData();
+        });
+
+
+    </script>
+</body>
+
+</html>

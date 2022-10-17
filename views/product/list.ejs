@@ -1,0 +1,99 @@
+<%- include('../parts/html_head') %>
+    <%- include('../parts/html_navbar') %>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" name="search" value="<%= search %>" type="search"
+                            placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link <%= page ==1 ?'disabled' : ''  %> "
+                                href="?<%= new URLSearchParams ({...query,page:page-1}).toString() %> ">
+                                <i class="fa-solid fa-circle-arrow-left"></i>
+                            </a>
+                        </li>
+                        <!-- 當for 底下只有一個statment 就可以拿掉{} -->
+                        <% for(let i=page-5; i<=page+5; i++) if(i>=1 && i<=totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link  <%= i ==page ?'active' : ''  %> "
+                                        href="?<%= new URLSearchParams ({...query,page:i}).toString() %> ">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                                <% } %>
+                                    <li class="page-item">
+                                        <a class="page-link  <%= page ==totalPages ?'disabled' : ''  %> "
+                                            href="?<%= new URLSearchParams ({...query,page:page+1}).toString() %>">
+                                            <i class="fa-solid fa-circle-arrow-right"></i></a>
+                                    </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">商品名稱</th>
+                            <th scope="col">種類</th>
+                            <th scope="col">品牌</th>
+                            <th scope="col">價格</th>
+                            <th scope="col">庫存</th>
+                            <th scope="col">圖片名稱</th>
+                            <th scope="col">商品敘述</th>
+                            <th scope="col">日期測試</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(r of rows) { %>
+                            <tr>
+                                <th scope="row">
+                                    <%= r.product_sid %>
+                                </th>
+                                <td>
+                                    <%= r.product_name %>
+                                </td>
+                                <td>
+                                    <%= r.product_category_sid %>
+                                </td>
+                                <td>
+                                    <%= r.brand_sid %>
+                                </td>
+                                <td>
+                                    <%= r.product_price %>
+                                </td>
+                                <td>
+                                    <%= r.product_inventory %>
+                                </td>
+                                <td>
+                                    <%= r.picture %>
+                                </td>
+                                <td>
+                                    <%= r.product_description %>
+                                </td>
+                                <td>
+                                    <%= toDateString('2019-01-07 10:39:38') %>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+
+        <%- include('../parts/scripts') %>
+            <%- include('../parts/html_foot') %>

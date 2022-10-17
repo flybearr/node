@@ -69,6 +69,13 @@
         </div>
     </div>
     <script>
+
+        //URLSearchParams  =>  str = '?a=1&b=2'  
+        //ups = new URLSearchParams(str)
+        //ups.get('a')   等於1
+
+
+
         const tbody = document.querySelector('#tbody');
         const pagination = document.querySelector('.pagination');
         let page_url = window.location.search;
@@ -77,7 +84,7 @@
 
         getData(page_url);
         async function getData(page_url) {
-            const data = await fetch(`/products${page_url}`);
+            const data = await fetch(`/products/api${page_url}`);
             const { rows, totalPages, page } = await data.json();
 
             await getRows(rows, totalPages, page);

@@ -11,7 +11,8 @@ router.use((req, res, next) => {
 
 //CRUD
 
-async function getListData(req, res) {
+
+router.get(['/', '/123'], async (req, res) => {
     const perpage = 10;
     // +是把字串轉換成數字
     let page = +req.query.page || 1;
@@ -19,7 +20,7 @@ async function getListData(req, res) {
         return res.redirect(req.baseUrl);
     }
 
-    let search = req.query.search ? req.query.search.trim() : '';
+    let                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                = req.query.search ? req.query.search.trim() : '';
     let where = `WHERE 1 `;  //記得要空格
     if (search) {
         where += `AND 
@@ -47,19 +48,8 @@ async function getListData(req, res) {
         // 只有陣列可以這樣做，解構附值
         [rows] = await db.query(sql);
     }
-    // res.json({ totalRows, totalPages, perpage, page, rows });
-    return { totalRows, totalPages, perpage, page, rows, search, query: req.query };
-}
-
-router.get(['/', '/list'], async (req, res) => {
-    const data = await getListData(req, res);
-
-    res.render('product/list', data);
-})
-router.get(['/api', '/api/list'], async (req, res) => {
-
-    res.json(await getListData(req, res));
-
+    res.json({ totalRows, totalPages, perpage, page, rows });
+    // res.render('product/list', { totalRows, totalPages, perpage, page, rows, query: req.query });
 })
 
 

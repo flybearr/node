@@ -5,6 +5,9 @@ const session = require('express-session');
 // MysqlStore 將session存入資料庫 
 const MysqlStore = require('express-mysql-session')(session);
 const db = require(__dirname + '/module/db_connect2');
+const cors = require('cors');
+
+
 // https://www.npmjs.com/package/express-mysql-session 
 const sessionStore = new MysqlStore({ schema: { tableName: 'session2' } }, db);
 
@@ -20,7 +23,7 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-
+app.use(cors());
 app.use(session({
     saveUninitialized: false,
     resave: false, // 沒變更內容是否強制回存
@@ -35,6 +38,15 @@ app.use(session({
 // use是全域使用，會自動判定型別
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+
+app.use((req, res, next) => {
+    res.locals.toDateString = (date) => moment(date).format('YYYY-MM-DD');
+    res.locals.toDatetimeString = (date) => moment(date).format('YYYY-MM-DD  HH:mm:ss');
+    next();
+})
+
+
 
 
 //routers
@@ -223,6 +235,7 @@ app.get('/try-db-add2', async (req, res) => {
 
 
 app.use('/products', require(__dirname + '/routes/product'));
+
 
 
 app.use(express.static('public'));
