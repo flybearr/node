@@ -37,17 +37,11 @@
                                             href="?<%= new URLSearchParams ({...query,page:page+1}).toString() %>">
                                             <i class="fa-solid fa-circle-arrow-right"></i></a>
                                     </li>
-
                     </ul>
-
-
                 </nav>
-
             </div>
             <div class="row">
-                <form action="" name="form1" onsubmit="checkForm(event)">
                 <table class="table">
-                    <button id="btn">刪除</button>
                     <thead>
                         <tr>
                             <th scope="col"><i class="fa-solid fa-trash-can"></i></th>
@@ -63,15 +57,13 @@
                             <th scope="col"><i class="fa-solid fa-pen-to-square"></i></th>
                         </tr>
                     </thead>
-
                     <tbody>
                         <% for(r of rows) { %>
                             <tr>
                                 <td>
-
-                                    <input type="checkbox" name="<%= r.product_sid %>" value="<%= r.product_sid %>"
-                                        class="ckbox">
-
+                                    <a href="javascript:del(<%= r.product_sid %>)">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
                                 </td>
                                 <th scope="row">
                                     <%= r.product_sid %>
@@ -108,9 +100,7 @@
                             </tr>
                             <% } %>
                     </tbody>
-
                 </table>
-                </form>
             </div>
         </div>
 
@@ -120,50 +110,7 @@
         <%- include('../parts/scripts') %>
             <script>
 
-                const btn = document.querySelector('.btn');
-                const ckbox = document.querySelectorAll('.ckbox');
-
-                function checkForm(evt) {
-                    evt.preventDefault();
-
-                    const fd = new FormData(document.form1);
-                    const data = {};
-                    for (let [k, v] of fd) {
-                        // console.log({k, v})
-                        data[k] = v;
-                    }
-                    fetch('/products/del', {
-                        method: 'POST',
-                        body: JSON.stringify(data),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }).then(r => r.json())
-                        .then(result => {
-                            console.log(result);
-                            location.reload();
-                        })
-                }
-
-
-
-                let str = '/';
-                // console.log(ckbox);
-                // ckbox.forEach((el) => {
-                //     el.addEventListener('click', (e) => {
-                //         const ckbox_value = e.target.name;
-                //         str += ` / ${ckbox_value}`;
-                //         history.pushState('', '', str);
-                //     })
-                // })
-
-                btn.addEventListener('change', async () => {
-
-
-                    const nsp = new URLSearchParams();
-                })
-
-
+                
                 function del(sid) {
                     fetch('/products/del/' + sid, {
                         method: 'DELETE'

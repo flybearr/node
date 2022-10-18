@@ -14,6 +14,11 @@ router.use((req, res, next) => {
 
 });
 
+function getDelQs(req, res) {
+
+}
+
+
 
 //CRUD
 
@@ -129,12 +134,31 @@ router.put('/edit/:sid', async (req, res) => {
 
 //刪除資料
 
-router.delete('/del/:sid', async (req, res) => {
-    const sql = 'DELETE FROM `product` WHERE product_sid=?';
+router.post('/del', async (req, res) => {
+    const obj = req.body;
 
-    const [result] = await db.query(sql, [req.params.sid]);
+    // for (let i = 1; i <= Object.keys(obj).length; i++) {
+    //     const sql = `DELETE FROM 'product' WHERE product_sid=?`;
+    //     const [result] = await db.query(sql, req.body.);
+    // }
 
-    res.json({ success: !!result.affectedRows });
+    // const sql = `DELETE FROM 'product' WHERE product_sid=?`;
+    // const [result] = await db.query(sql,req.params.sid);
+
+    const www = Object.keys(obj);
+    console.log(www);
+
+    www.forEach(el => {
+        console.log(el);
+        db.query(`DELETE FROM product WHERE product_sid=${el}`)
+    });
+
+    // res.redirect(req.baseUrl);
+
+
+    res.json('');
+    // res.json({ success: !!result.affectedRows });
+
 
 })
 
