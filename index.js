@@ -6,6 +6,7 @@ const session = require('express-session');
 const MysqlStore = require('express-mysql-session')(session);
 const db = require(__dirname + '/module/db_connect2');
 const cors = require('cors');
+const axios = require('axios');
 
 
 // https://www.npmjs.com/package/express-mysql-session 
@@ -23,7 +24,20 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(cors());
+
+
+const corsOptions = {
+    credential: true,
+    origin: function (origin, callback) {
+        console.log({ origin });
+        callback(null, true);
+    }
+}
+
+
+app.use(cors(corsOptions));
+
+
 app.use(session({
     saveUninitialized: false,
     resave: false, // 沒變更內容是否強制回存
@@ -43,6 +57,8 @@ app.use(express.json());
 app.use((req, res, next) => {
     res.locals.toDateString = (date) => moment(date).format('YYYY-MM-DD');
     res.locals.toDatetimeString = (date) => moment(date).format('YYYY-MM-DD  HH:mm:ss');
+    res.locals.title = '歡迎來到這';
+    res.locals.session = req.session;
     next();
 })
 
@@ -236,6 +252,25 @@ app.get('/try-db-add2', async (req, res) => {
 
 app.use('/products', require(__dirname + '/routes/product'));
 
+app.use('/fake-login', (req, res) => {
+    req.session.admin = {
+        id: 88,
+        account: 'Nelson',
+        nickname: '會飛的熊'
+    };
+    res.redirect('/');
+})
+
+app.use('/logout', (req, res) => {
+    delete req.session.admin;
+
+    res.redirect('/');
+})
+
+app.get('/yt',async (req,res)=>{
+    const response = await axios.get('https://www.youtube.com/');
+    res.send(response.data);
+})
 
 
 app.use(express.static('public'));

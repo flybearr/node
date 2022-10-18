@@ -151,37 +151,30 @@
             </table>`;
         }
 
-        fetch('/products/api' + location.search)
-            .then(r => r.json())
-            .then(result => {
-                // console.log(result);
-
-                t_con.innerHTML = renderTable(result);
-                p_con.innerHTML = renderpage(result);
-            });
+        getDataAndRender();
 
 
 
-
-        async function getData() {
+        async function getDataAndRender() {
             let usp = new URLSearchParams(location.search);
+            if (usp.get('search')) document.forms[0].search.value = usp.get('search')
+            else document.forms[0].search.value = '';
             const r = await fetch('/products/api?' + usp.toString());
             const result = await r.json();
             t_con.innerHTML = renderTable(result);
             p_con.innerHTML = renderpage(result);
+
         }
 
-        const usp = new URLSearchParams(location.search);
-        if (usp.get('search')) document.forms[0].search.value = usp.get('search');
+
 
 
         function doSearch(event) {
             event.preventDefault();
             const f = event.currentTarget;
-
             const usp = new URLSearchParams({ search: f.search.value });
             history.pushState('', '', '?' + usp.toString());
-            getData();
+            getDataAndRender();
 
         }
 
@@ -190,26 +183,26 @@
             const usp = new URLSearchParams(location.search);
             usp.set('page', p);
             history.pushState('', '', '?' + usp.toString());
-            getData();
+            getDataAndRender();
         }
         function gotoPageUp(p) {
             const usp = new URLSearchParams(location.search);
             usp.set('page', p + 1);
             history.pushState('', '', '?' + usp.toString());
-            getData();
+            getDataAndRender();
 
         }
         function gotoPageDown(p) {
             const usp = new URLSearchParams(location.search);
             usp.set('page', p - 1);
             history.pushState('', '', '?' + usp.toString());
-            getData();
+            getDataAndRender();
         }
 
 
 
         window.addEventListener('popstate', function () {
-            getData();
+            getDataAndRender();
         });
 
 

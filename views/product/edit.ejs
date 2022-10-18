@@ -1,0 +1,134 @@
+<%- include('../parts/html_head') %>
+    <%- include('../parts/html_navbar') %>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <h5 class="card-title">修改資料</h5>
+                            <form name="form1" onsubmit="checkForm(event)" novalidate>
+                                <div class="mb-3">
+                                    <label for="product_name" class="form-label">product_name</label>
+                                    <input type="text" class="form-control" id="product_name" name="product_name"
+                                        value="<%= product_name  %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="product_category_sid" class="form-label">product_category_sid</label>
+                                    <input type="text" class="form-control" id="product_category_sid"
+                                        name="product_category_sid" value="<%= product_category_sid  %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="brand_sid" class="form-label">brand_sid</label>
+                                    <input type="text" class="form-control" id="brand_sid" name="brand_sid"
+                                        value="<%= brand_sid %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="product_price" class="form-label">product_price</label>
+                                    <input type="text" class="form-control" id="product_price" name="product_price"
+                                        value="<%= product_price %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="product_inventory" class="form-label">product_inventory</label>
+                                    <input type="text" class="form-control" id="product_inventory"
+                                        name="product_inventory" value="<%= product_inventory %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="picture" class="form-label">picture_path</label>
+                                    <input type="text" class="form-control" id="picture" name="picture"
+                                        value="<%= picture %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="product_description" class="form-label">product_description</label>
+                                    <input type="text" class="form-control" id="product_description"
+                                        value="<%= product_description %>" name="product_description">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">修改</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <%- include('../parts/scripts') %>
+            <script>
+                //json
+                //缺點:不可以有重複名稱的欄位
+                // function checkForm(evt) {
+                //     evt.preventDefault();
+
+                //     const fd = new FormData(document.form1);
+                //     const data = {};
+                //     for(let [k, v] of fd){
+                //         // console.log({k, v})
+                //         data[k]=v;
+                //     }
+                //     fetch('',{
+                //         method: 'POST',
+                //         body: JSON.stringify(data),
+                //         headers:{
+                //             'Content-Type':'application/json'
+                //         }
+                //     }).then(r=>r.json())
+                //     .then(result=>{
+                //         console.log(result);
+                //     })
+                // }
+
+
+
+
+                //urlencode
+                function checkForm(evt) {
+                    evt.preventDefault();
+
+                    const fd = new FormData(document.form1);
+                    const usp = new URLSearchParams(fd);
+
+
+                    fetch('', {
+                        method: 'PUT',
+                        body: usp.toString(),
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    }).then(r => r.json())
+                        .then(result => {
+                            console.log(result);
+                            if (result.success) {
+                                alert('修改完成');
+                            } else {
+                                alert('資料沒有修改');
+                            }
+                        })
+                }
+
+                //martipart
+                // function checkForm(evt) {
+                //     evt.preventDefault();
+
+                //     const fd = new FormData(document.form1);
+
+                //     fetch('', {
+                //         method: 'POST',
+                //         body: fd
+                //     }).then(r => r.json())
+                //         .then(result => {
+                //             console.log(result);
+                //             if (result.success) {
+                //                 location.href = './';
+                //             } else {
+                //                 alert('無法新增');
+                //             }
+                //         })
+                // }
+            </script>
+            <%- include('../parts/html_foot') %>
