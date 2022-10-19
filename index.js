@@ -5,6 +5,7 @@ const session = require('express-session');
 // MysqlStore 將session存入資料庫 
 const MysqlStore = require('express-mysql-session')(session);
 const db = require(__dirname + '/module/db_connect2');
+const db2 = require(__dirname + '/module/db_connect_proj57');
 const cors = require('cors');
 const axios = require('axios');
 
@@ -267,10 +268,66 @@ app.use('/logout', (req, res) => {
     res.redirect('/');
 })
 
-app.get('/yt',async (req,res)=>{
+app.get('/yt', async (req, res) => {
     const response = await axios.get('https://www.youtube.com/');
     res.send(response.data);
 })
+
+app.get('/cate', async (req, res) => {
+    const [rows] = await db2.query("SELECT * FROM categories ");
+
+    const firsts =  [];
+
+    for(let i of rows){
+        if(i.parent_sid===0){
+            firsts.push(i);
+        }
+    }
+
+    for(let f of firsts){
+        for(let i of rows){
+            if(f.sid === i.parent_sid){
+                f.children ||= [];
+                f.children.push(i);
+            }
+        }
+    }
+
+
+
+    res.json(firsts);
+});
+
+app.get('/cate2', async (req, res) => {
+    const [rows] = await db2.query("SELECT * FROM categories ");
+
+    const  dict = {};
+    //編輯字典
+
+    for(let i of rows){
+        dict[i.sid]=i;
+    }
+
+
+    for(let i of rows){
+        if(i.parent_sid!=0){
+            const p =dict[i.parent_sid];
+            p.children ||= [];
+            p.children.push(i);
+        }
+    }
+
+    const firsts = [];
+    for(let i of rows){
+        if(i.parent_sid===0){
+            firsts.push(i);
+        }
+    }
+    
+
+
+    res.json(firsts);
+});
 
 
 app.use(express.static('public'));

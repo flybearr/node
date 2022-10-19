@@ -144,19 +144,21 @@ router.post('/del', async (req, res) => {
 
     // const sql = `DELETE FROM 'product' WHERE product_sid=?`;
     // const [result] = await db.query(sql,req.params.sid);
-
     const www = Object.keys(obj);
     console.log(www);
-
-    www.forEach(el => {
-        console.log(el);
-        db.query(`DELETE FROM product WHERE product_sid=${el}`)
-    });
+    let r;
+    for (el of www) {
+        // console.log(el);
+        const [result] = await db.query(`DELETE FROM product WHERE product_sid=${el}`);
+        console.log(result);
+        // let kk = r.result;
+        r += JSON.stringify(result);
+    };
 
     // res.redirect(req.baseUrl);
 
 
-    res.json('');
+    res.json(r);
     // res.json({ success: !!result.affectedRows });
 
 

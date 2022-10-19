@@ -18,6 +18,7 @@
 
                 </ul>
                 <ul class="navbar-nav  mb-2 mb-lg-0">
+                    <!-- 也可以寫成這樣 if(session.admin?.account) -->
                     <% if(session.admin && session.admin.account){ %>
                         <li class="nav-item">
                             <a class="nav-link">
