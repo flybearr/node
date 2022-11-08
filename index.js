@@ -8,10 +8,12 @@ const db = require(__dirname + '/module/db_connect2');
 const db2 = require(__dirname + '/module/db_connect_proj57');
 const cors = require('cors');
 const axios = require('axios');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 // https://www.npmjs.com/package/express-mysql-session 
-const sessionStore = new MysqlStore({ schema: { tableName: 'session2' } }, db);
+const sessionStore = new MysqlStore({ schema: { tableName: 'session2' } }, db2);
 
 //測試用
 express.li = '您好';
@@ -328,6 +330,40 @@ app.get('/cate2', async (req, res) => {
 
     res.json(firsts);
 });
+
+
+app.post('/login-api',async (req,res)=>{
+    const output = {
+        success:false,
+        error:'密碼錯誤',
+        postData:req.body, //除錯用
+    }
+    const sql = "SELECT * FROM admins WHERE account=?";
+    const [rows] = await db2.query(sql, [req.body.account]);
+    
+    if(! rows.length){
+        return res.json(output)
+    }
+    
+    const row = rows[0];
+
+    output.success = await bcrypt.compare(req.body.password,row['password_hash']);
+
+    if(output.success) {
+        output.error = '';
+        const {sid, account, admin_group} = row;
+        const token = jwt.sign({sid, account, admin_group}, process.env.JWT_SECRET);
+        output.auth = {
+            sid,
+            account,
+            token
+        }
+    }
+
+    res.json(output);
+
+})
+
 
 
 app.use(express.static('public'));
