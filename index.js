@@ -62,6 +62,14 @@ app.use((req, res, next) => {
     res.locals.toDatetimeString = (date) => moment(date).format('YYYY-MM-DD  HH:mm:ss');
     res.locals.title = '歡迎來到這';
     res.locals.session = req.session;
+
+    const auth = req.get('Authorization');
+    res.locals.loginUser = null;
+    if(auth && auth.indexOf('Bearer ')===0){
+        const token = auth.slice(7);
+        res.locals.loginUser = jwt.verify(token, process.env.JWT_SECRET);
+    }
+
     next();
 })
 
@@ -254,6 +262,7 @@ app.get('/try-db-add2', async (req, res) => {
 
 
 app.use('/products', require(__dirname + '/routes/product'));
+// app.use('/addres-book', require(__dirname + '/routes/address-book'));
 
 app.use('/fake-login', (req, res) => {
     req.session.admin = {
@@ -337,10 +346,13 @@ app.post('/login-api',async (req,res)=>{
         success:false,
         error:'密碼錯誤',
         postData:req.body, //除錯用
+        auth: {}
     }
+
     const sql = "SELECT * FROM admins WHERE account=?";
     const [rows] = await db2.query(sql, [req.body.account]);
-    
+     
+
     if(! rows.length){
         return res.json(output)
     }
@@ -358,6 +370,7 @@ app.post('/login-api',async (req,res)=>{
             account,
             token
         }
+      
     }
 
     res.json(output);
