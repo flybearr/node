@@ -8,6 +8,8 @@ const db = require(__dirname + '/module/db_connect2');
 const db2 = require(__dirname + '/module/db_connect_proj57');
 const cors = require('cors');
 const axios = require('axios');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 // import fetch  from 'node-fetch';
 const fetch = require('node-fetch');
 
@@ -18,7 +20,7 @@ let key = 'b0f9290abc6d75e2d2ace18bea2b1e17';
 let url =`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}`;
 
 // https://www.npmjs.com/package/express-mysql-session 
-const sessionStore = new MysqlStore({ schema: { tableName: 'session2' } }, db);
+const sessionStore = new MysqlStore({ schema: { tableName: 'session2' } }, db2);
 
 //測試用
 express.li = '您好';
@@ -67,6 +69,14 @@ app.use((req, res, next) => {
     res.locals.toDatetimeString = (date) => moment(date).format('YYYY-MM-DD  HH:mm:ss');
     res.locals.title = '歡迎來到這';
     res.locals.session = req.session;
+
+    const auth = req.get('Authorization');
+    res.locals.loginUser = null;
+    if(auth && auth.indexOf('Bearer ')===0){
+        const token = auth.slice(7);
+        res.locals.loginUser = jwt.verify(token, process.env.JWT_SECRET);
+    }
+
     next();
 })
 
@@ -259,6 +269,7 @@ app.get('/try-db-add2', async (req, res) => {
 
 
 app.use('/products', require(__dirname + '/routes/product'));
+// app.use('/addres-book', require(__dirname + '/routes/address-book'));
 
 app.use('/fake-login', (req, res) => {
     req.session.admin = {
@@ -345,6 +356,44 @@ app.get('/cate2', async (req, res) => {
 
     res.json(firsts);
 });
+
+
+app.post('/login-api',async (req,res)=>{
+    const output = {
+        success:false,
+        error:'密碼錯誤',
+        postData:req.body, //除錯用
+        auth: {}
+    }
+
+    const sql = "SELECT * FROM admins WHERE account=?";
+    const [rows] = await db2.query(sql, [req.body.account]);
+     
+
+    if(! rows.length){
+        return res.json(output)
+    }
+    
+    const row = rows[0];
+
+    output.success = await bcrypt.compare(req.body.password,row['password_hash']);
+
+    if(output.success) {
+        output.error = '';
+        const {sid, account, admin_group} = row;
+        const token = jwt.sign({sid, account, admin_group}, process.env.JWT_SECRET);
+        output.auth = {
+            sid,
+            account,
+            token
+        }
+      
+    }
+
+    res.json(output);
+
+})
+
 
 
 app.use(express.static('public'));
