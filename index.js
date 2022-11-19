@@ -8,7 +8,14 @@ const db = require(__dirname + '/module/db_connect2');
 const db2 = require(__dirname + '/module/db_connect_proj57');
 const cors = require('cors');
 const axios = require('axios');
+// import fetch  from 'node-fetch';
+const fetch = require('node-fetch');
 
+let city = 'Taipei';
+let cnt = 10;
+let key = 'b0f9290abc6d75e2d2ace18bea2b1e17';
+// https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
+let url =`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}`;
 
 // https://www.npmjs.com/package/express-mysql-session 
 const sessionStore = new MysqlStore({ schema: { tableName: 'session2' } }, db);
@@ -28,7 +35,7 @@ app.set('view engine', 'ejs');
 
 
 const corsOptions = {
-    credential: true,
+    credentials: true,
     origin: function (origin, callback) {
         console.log({ origin });
         callback(null, true);
@@ -50,7 +57,7 @@ app.use(session({
 }));
 
 // top-level-middleware
-// use是全域使用，會自動判定型別
+// use是全域使用，會自動判定型別   extended: false  'String'或'Array'形式，
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -271,6 +278,16 @@ app.use('/logout', (req, res) => {
 app.get('/yt', async (req, res) => {
     const response = await axios.get('https://www.youtube.com/');
     res.send(response.data);
+})
+
+
+app.get('/city',  (req, res) => {
+
+    fetch(url)
+    .then(d=>d.json())
+    .then(djs =>{
+        console.log(djs);
+    })
 })
 
 app.get('/cate', async (req, res) => {
