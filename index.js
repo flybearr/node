@@ -10,10 +10,11 @@ const cors = require('cors');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-// import fetch  from 'node-fetch';
-const fetch = require('node-fetch');
+
 
 let city = 'Taipei';
+let wheather_key =process.env.Weather_key;
+let weaather_dataid = 'F-D0047-089';
 let cnt = 10;
 let key = 'b0f9290abc6d75e2d2ace18bea2b1e17';
 // https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
@@ -291,15 +292,31 @@ app.get('/yt', async (req, res) => {
     res.send(response.data);
 })
 
+//天氣
+app.get('/city',  async (req, res) => {
 
-app.get('/city',  (req, res) => {
 
-    fetch(url)
-    .then(d=>d.json())
-    .then(djs =>{
-        console.log(djs);
-    })
+    const r = await axios.get(url);
+    const r2 = r.data
+    res.json(r2)
+
+    // fetch(url)
+    // .then(d=>d.json())
+    // .then(djs =>{
+    //     console.log(djs);
+    // })
 })
+//opneData 天氣api
+app.get('/city2',  async (req, res) => {
+
+
+    const r = await axios.get(`https://opendata.cwb.gov.tw/fileapi/v1/opendataapi/${weaather_dataid}?Authorization=${wheather_key}&format=JSON`);
+    const r2 = r.data
+    res.json(r2)
+
+})
+
+
 
 app.get('/cate', async (req, res) => {
     const [rows] = await db2.query("SELECT * FROM categories ");
